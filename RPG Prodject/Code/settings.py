@@ -17,13 +17,13 @@ COLORS = {
 }
 
 MONSTER_DATA = {
-    'ArthurKorea': {'element': 'fire', 'health': 90},
-    'Chrome': {'element': 'water', 'health': 90},
-    'MattBush': {'element': 'plant', 'health': 90},
-    'SigmaMan': {'element': 'water', 'health': 90},
-    'Spalacidae': {'element': 'plant', 'health': 90},
-    'Bat': {'element': 'fire', 'health': 90},
-    'Jorell': {'element': 'black', 'health': 90},
+    'ArthurKorea': {'element': 'fire', 'health': 90, 'armour': 4},
+    'Chrome': {'element': 'water', 'health': 90, 'armour': 2},
+    'MattBush': {'element': 'plant', 'health': 90, 'armour': 4},
+    'SigmaMan': {'element': 'normal', 'health': 90, 'armour': 6},
+    'Spalacidae': {'element': 'plant', 'health': 90, 'armour': 10},
+    'Bat': {'element': 'flying', 'health': 90, 'armour': 4},
+    'Jorell': {'element': 'black', 'health': 90, 'armour': 6},
 }
 
 ABILITIES_DATA = {
@@ -36,10 +36,12 @@ ABILITIES_DATA = {
 }
 
 ELEMENT_DATA = {
-    'fire': {'water': 0.5, 'plant': 2, 'fire': 1, 'normal': 1},
-    'water': {'water': 1, 'plant': 0.5, 'fire': 2, 'normal': 1},
-    'plant': {'water': 2, 'plant': 1, 'fire': 0.5, 'normal': 1},
-    'normal': {'water': 1, 'plant': 1, 'fire': 1, 'normal': 1},
+    'fire': {'water': 0.5, 'plant': 2, 'fire': 1, 'normal': 1, 'flying': 1, 'black': 0.5},
+    'water': {'water': 1, 'plant': 0.5, 'fire': 2, 'normal': 1, 'flying': 0.5, 'black': 2},
+    'plant': {'water': 2, 'plant': 1, 'fire': 0.5, 'normal': 1, 'flying': 1, 'black': 1},
+    'normal': {'water': 1, 'plant': 1, 'fire': 1, 'normal': 1, 'flying': 1, 'black': 0.5},
+    'flying': {'water': 1, 'plant': 2, 'fire': 0.5, 'normal': 1, 'flying': 1, 'black': 1},
+    'black': {'water': 0.5, 'plant': 1, 'fire': 2, 'normal': 2, 'flying': 1, 'black': 1},
 }
 
 ITEM_DATA = {

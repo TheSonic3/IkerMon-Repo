@@ -25,13 +25,8 @@ class UI:
         self.itemIndex = 0
         self.visibleItems = 4
         self.playerItems = playerItems
-        self.availableItems = [item for item in self.playerItems if item != self.item and item.count > 0]
-        print("Available items after filtering:")
-        for itm in self.availableItems:
-            print(
-                f" - {itm} with name '{getattr(itm, 'name', 'NO NAME')}' and count {getattr(itm, 'count', 'NO COUNT')}")
+        self.availableItems = [item for item in self.playerItems if item.count > 0]
         self.getInput = getInput
-
 
     def input(self):
         keys = pygame.key.get_just_pressed()
@@ -56,11 +51,23 @@ class UI:
         elif self.state == 'switch':
             self.switchIndex = (self.switchIndex + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % len(self.availableMonsters)
             if keys[pygame.K_SPACE]:
-                self.getInput(self.state, self.availableMonsters[self.switchIndex],)
+                self.getInput(self.state, self.availableMonsters[self.switchIndex])
                 self.state = 'general'
                 self.generalIndex = {'col': 0, 'row': 0}
                 self.attackIndex = {'col': 0, 'row': 0}
                 self.switchIndex = 0
+
+        elif self.state == 'item':
+            self.itemIndex = (self.itemIndex + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % len(self.availableItems)
+            if keys[pygame.K_SPACE]:
+                self.getInput(self.state, self.availableItems[self.itemIndex])
+                self.state = 'general'
+                self.generalIndex = {'col': 0, 'row': 0}
+                self.attackIndex = {'col': 0, 'row': 0}
+                self.switchIndex = 0
+        elif self.state == 'escape':
+            if keys[pygame.K_SPACE]:
+                gamestate == 'plat'
 
         if keys[pygame.K_ESCAPE]:
             self.state = 'general'
@@ -120,11 +127,19 @@ class UI:
             y = rect.top + rect.height / (self.visibleItems * 2) + rect.height / self.visibleItems * i + verticalOffset
             color = COLORS['gray'] if i == self.itemIndex else COLORS['black']
             name = self.availableItems[i].name
+            count = self.availableItems[i].count
 
-            textSurf = self.font.render(name, True, color)
+            countSurf = self.font.render(str(f'{count}x'), True, color)
+            countRect = countSurf.get_frect(center=(x-100, y))
+
+            textSurf = self.font.render(str(name), True, color)
             textRect = textSurf.get_frect(midleft=(x, y))
             if rect.collidepoint(textRect.center):
                 self.screen.blit(textSurf, textRect)
+                self.screen.blit(countSurf, countRect)
+
+    def updateItems(self):
+        self.availableItems = [item for item in self.playerItems if item.count > 0]
 
         #menu
 

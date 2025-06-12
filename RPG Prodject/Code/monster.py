@@ -8,6 +8,8 @@ class monsterData:
         self._health = self.maxHealth = MONSTER_DATA[name]['health']
         self.abilities = sample(list(ABILITIES_DATA.keys()), 4)
         self.name = name
+        self.armour = MONSTER_DATA[name]['armour']
+
 
     @property
     def health(self):

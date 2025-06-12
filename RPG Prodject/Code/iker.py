@@ -5,9 +5,8 @@ import copy
 
 
 class Move:
-    def __init__(
-            self, name, attackDamage, attackStatus, attackStatusChance, attackType
-    ):
+    def __init__(self, name, attackDamage, attackStatus, attackStatusChance, attackType):
+
         self.name = name
         self.attackDamage = attackDamage
         self.attackStatus = attackStatus
@@ -22,21 +21,8 @@ class Move:
 
 
 class Monster:
-    def __init__(
-            self,
-            name,
-            exhausted,
-            level,
-            totalHp,
-            hp,
-            armour,
-            typ,
-            attackRatio,
-            speed,
-            status,
-            statusMoveCounter,
-            moves,
-    ):
+    def __init__(self, name, exhausted, level, totalHp, hp, armour, typ, attackRatio, speed, status, statusMoveCounter, moves,):
+
         self.name = name
         self.exhausted = exhausted
         self.level = level
@@ -576,7 +562,7 @@ def attackCalculator(team1, team2, team1Monster: Monster, team2Monster: Monster)
         print(f"Enemy {team2Monster.name}, has been knocked out")
         # print ("OE")
         team2Monster = enemyMonsterSwapper(team2)
-    return team1Monster, team2Monster, trueDamageAttacker, trueDamageReceiver
+    return team1Monster, team2Monster, trueDamageReceiver, trueDamageAttacker
 
 
 def turnHandler(team1, team2, team1Monster: Monster, team2Monster: Monster):
@@ -671,7 +657,9 @@ def mainBattle():
             if not team2Monster:  # All enemy monsters fainted
                 print("You won the battle!")
                 break
-    return trueDamageEnemy
+    return trueDamageAlly, trueDamageEnemy
 
 
 mainBattle()
+
+
