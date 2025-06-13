@@ -1,6 +1,6 @@
 import pygame.font
 from settings import*
-from main import *
+from battle_module import *
 
 class UI:
 
