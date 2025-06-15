@@ -23,7 +23,8 @@ def flip(sprites):
 
 
 def load_sprite_sheets(dir1, dir2, width, height, direction=False):
-    path = join("..", "assets", dir1, dir2)
+    path = join("assets", dir1, dir2)
+
     images = [f for f in listdir(path) if isfile(join(path, f))]
 
     all_sprites = {}
@@ -48,7 +49,7 @@ def load_sprite_sheets(dir1, dir2, width, height, direction=False):
 
 
 def get_block(size):
-    path = join("..", "assets", "Terrain", "Terrain.png")
+    path = join("assets", "Terrain", "Terrain.png")
     image = pygame.image.load(path).convert_alpha()
     surface = pygame.Surface((size, size), pygame.SRCALPHA, 32)
     rect = pygame.Rect(96, 0, size, size)
@@ -206,7 +207,7 @@ class Fire(Object):
 
 
 def get_background(name):
-    image = pygame.image.load(join("..", "assets", "Background", name))
+    image = pygame.image.load(join("assets", "Background", name))
     _, _, width, height = image.get_rect()
     tiles = []
 
@@ -331,11 +332,15 @@ if __name__ == "__main__":
     gamestate = 'plat'
 
     while True:
+        print(f"Starting gamestate: {gamestate}")
         if gamestate == 'plat':
-            main(window)  # runs the platformer
+            gamestate = main(window)  # runs the platformer
+            print(f"Platformer returned gamestate: {gamestate}")
         elif gamestate == 'battle':
             from battle_module import run_battle
-            gamestate = run_battle()
+            print("Entering battle mode...")
+            gamestate = run_battle(window)
+            print(f"Battle returned gamestate: {gamestate}")
         else:
             print(f"Unknown gamestate '{gamestate}', exiting.")
             break

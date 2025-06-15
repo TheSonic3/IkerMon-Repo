@@ -6,7 +6,7 @@ from random import randint, choice
 from ui import *
 from Item import items
 
-def run_battle ():
+def run_battle (window):
     class Game:
         def __init__(self):
             pygame.init()
@@ -16,6 +16,7 @@ def run_battle ():
             self.running = True
             self.importAssets()
             self.playerActive = True
+            self.exitCode = None
             # groups
             self.allSprites = pygame.sprite.Group()
 
@@ -38,6 +39,7 @@ def run_battle ():
             self.timers = {'player end': Timer(1000, func=self.opponentTurn), 'opponent end': Timer(1000, func=self.playerTurn)}
 
         def getInput(self, state, data):
+            print(f'[DEBUG] getInput called with state={state}, data={data}')
 
             if state == 'attack':
                 self.applyAttack(self.opponent, data)
@@ -50,6 +52,11 @@ def run_battle ():
 
             if state == 'item':
                 self.applyItem(self.monster, data)
+
+            if state == 'escape':
+                self.exitCode = 'plat'
+                self.running = False
+                return
 
             self.playerActive = False
             self.timers['player end'].activate()
@@ -95,17 +102,18 @@ def run_battle ():
                     self.allSprites.add(self.monster)
                     self.ui.monster = self.monster
                 else:
-                    return 'plat'
+                    self.running = False
+                    self.exitCode = 'plat'
 
         def updateTimers(self):
             for timer in self.timers.values():
                 timer.update()
 
         def importAssets(self):
-            self.backSurfs = folderImporter('../Graphics', 'back')
-            self.bgSurfs = folderImporter('../Graphics', 'other')
-            self.frontSurfs = folderImporter('../Graphics', 'front')
-            self.simpleSurfs = folderImporter('../Graphics', 'simple')
+            self.backSurfs = folderImporter('Graphics', 'back')
+            self.bgSurfs = folderImporter('Graphics', 'other')
+            self.frontSurfs = folderImporter('Graphics', 'front')
+            self.simpleSurfs = folderImporter('Graphics', 'simple')
 
         def drawMonsterFloor(self):
             for sprite in self.allSprites:
@@ -136,8 +144,8 @@ def run_battle ():
                 self.opponentUI.draw()
                 pygame.display.update()
 
-            pygame.quit()
+            return self.exitCode or 'plat'
 
-    if __name__ == '__main__':
-        game = Game()
-        game.run()
+    game = Game()
+    return game.run()
+

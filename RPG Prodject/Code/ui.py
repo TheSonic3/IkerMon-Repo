@@ -29,13 +29,14 @@ class UI:
         self.getInput = getInput
 
     def input(self):
-        keys = pygame.key.get_just_pressed()
+        keys = pygame.key.get_pressed()
 
         if self.state == 'general':
             self.generalIndex['row'] = (self.generalIndex['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % self.rows
             self.generalIndex['col'] = (self.generalIndex['col'] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])) % self.cols
             if keys[pygame.K_SPACE]:
                 self.state = self.generalOptions[self.generalIndex['col']+self.generalIndex['row'] * 2]
+
 
         elif self.state == 'attack':
             self.attackIndex['row'] = (self.attackIndex['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % self.rows
@@ -65,9 +66,10 @@ class UI:
                 self.generalIndex = {'col': 0, 'row': 0}
                 self.attackIndex = {'col': 0, 'row': 0}
                 self.switchIndex = 0
+
         elif self.state == 'escape':
             if keys[pygame.K_SPACE]:
-                gamestate == 'plat'
+                self.getInput(self.state, 'sigma')
 
         if keys[pygame.K_ESCAPE]:
             self.state = 'general'
