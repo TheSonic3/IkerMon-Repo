@@ -27,55 +27,103 @@ class UI:
         self.playerItems = playerItems
         self.availableItems = [item for item in self.playerItems if item.count > 0]
         self.getInput = getInput
+        self.events = []
+        self.change_option_cooldown = 0.1
+        self.change_option_timer = 0
+        self.clock = pygame.time.Clock()
+        self.previous_keys = None
+
+    def get_just_pressed(self):
+        current_keys = pygame.key.get_pressed()
+
+        # Initialize on first call
+        if self.previous_keys is None:
+            self.previous_keys = [False] * len(current_keys)
+
+        just_pressed = [False] * len(current_keys)
+        for i in range(len(current_keys)):
+            just_pressed[i] = current_keys[i] and not self.previous_keys[i]
+        self.previous_keys = list(current_keys)
+        return just_pressed
 
     def input(self):
-        keys = pygame.key.get_pressed()
+        keys = self.get_just_pressed()
+        dt = self.clock.tick(60) / 1000.0
+        self.change_option_timer += dt
 
-        if self.state == 'general':
-            self.generalIndex['row'] = (self.generalIndex['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % self.rows
-            self.generalIndex['col'] = (self.generalIndex['col'] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])) % self.cols
+        if (
+                self.state == "general"
+                and self.change_option_timer >= self.change_option_cooldown
+        ):
+            # Clamp instead of wrap for generalIndex
+            self.generalIndex["row"] += int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+            self.generalIndex["col"] += int(keys[pygame.K_d]) - int(keys[pygame.K_a])
+
+            self.generalIndex["row"] = max(0, min(self.generalIndex["row"], self.rows - 1))
+            self.generalIndex["col"] = max(0, min(self.generalIndex["col"], self.cols - 1))
+
             if keys[pygame.K_SPACE]:
-                self.state = self.generalOptions[self.generalIndex['col']+self.generalIndex['row'] * 2]
+                self.state = self.generalOptions[
+                    self.generalIndex["col"] + self.generalIndex["row"] * 2
+                    ]
 
-
-        elif self.state == 'attack':
-            self.attackIndex['row'] = (self.attackIndex['row'] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % self.rows
-            self.attackIndex['col'] = (self.attackIndex['col'] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])) % self.cols
+        elif self.state == "attack":
+            self.attackIndex["row"] = (
+                                              self.attackIndex["row"] + int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+                                      ) % self.rows
+            self.attackIndex["col"] = (
+                                              self.attackIndex["col"] + int(keys[pygame.K_d]) - int(keys[pygame.K_a])
+                                      ) % self.cols
             if keys[pygame.K_SPACE]:
-                attack = self.monster.abilities[self.attackIndex['col'] + self.attackIndex['row'] * 2]
+                attack = self.monster.abilities[
+                    self.attackIndex["col"] + self.attackIndex["row"] * 2
+                    ]
                 self.getInput(self.state, attack)
-                self.state = 'general'
-                self.generalIndex = {'col': 0, 'row': 0}
-                self.attackIndex = {'col': 0, 'row': 0}
+                self.state = "general"
+                self.generalIndex = {"col": 0, "row": 0}
+                self.attackIndex = {"col": 0, "row": 0}
                 self.switchIndex = 0
 
-        elif self.state == 'switch':
-            self.switchIndex = (self.switchIndex + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % len(self.availableMonsters)
+        elif self.state == "switch":
+            self.switchIndex = (
+                                       self.switchIndex + int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+                               ) % len(self.availableMonsters)
             if keys[pygame.K_SPACE]:
                 self.getInput(self.state, self.availableMonsters[self.switchIndex])
-                self.state = 'general'
-                self.generalIndex = {'col': 0, 'row': 0}
-                self.attackIndex = {'col': 0, 'row': 0}
+                self.state = "general"
+                self.generalIndex = {"col": 0, "row": 0}
+                self.attackIndex = {"col": 0, "row": 0}
                 self.switchIndex = 0
 
-        elif self.state == 'item':
-            self.itemIndex = (self.itemIndex + int(keys[pygame.K_s]) - int(keys[pygame.K_w])) % len(self.availableItems)
+        elif self.state == "item":
+            self.itemIndex = (
+                                     self.itemIndex + int(keys[pygame.K_s]) - int(keys[pygame.K_w])
+                             ) % len(self.availableItems)
             if keys[pygame.K_SPACE]:
                 self.getInput(self.state, self.availableItems[self.itemIndex])
-                self.state = 'general'
-                self.generalIndex = {'col': 0, 'row': 0}
-                self.attackIndex = {'col': 0, 'row': 0}
+                self.state = "general"
+                self.generalIndex = {"col": 0, "row": 0}
+                self.attackIndex = {"col": 0, "row": 0}
                 self.switchIndex = 0
 
-        elif self.state == 'escape':
+        elif self.state == "escape":
             if keys[pygame.K_SPACE]:
-                self.getInput(self.state, 'sigma')
+                self.getInput(self.state, "sigma")
 
         if keys[pygame.K_ESCAPE]:
-            self.state = 'general'
-            self.generalIndex = {'col': 0, 'row': 0}
-            self.attackIndex = {'col': 0, 'row': 0}
+            self.state = "general"
+            self.generalIndex = {"col": 0, "row": 0}
+            self.attackIndex = {"col": 0, "row": 0}
             self.switchIndex = 0
+
+        if self.change_option_timer >= self.change_option_cooldown:
+            # if (
+            #     keys[pygame.K_a]
+            #     or keys[pygame.K_d]
+            #     or keys[pygame.K_s]
+            #     or keys[pygame.K_w]
+            # ):
+            self.change_option_timer -= self.change_option_cooldown
 
     def menu(self, index, options):
         # bg
